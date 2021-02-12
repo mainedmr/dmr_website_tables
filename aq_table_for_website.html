@@ -220,9 +220,9 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
         }); // Remove up to here if not using field searches
 
         $("#lease_table").on('search.dt', function() {
-            var data = table.column(6, { page: 'current' }).data()
+            var data = table.column(8, { page: 'current' }).data()
             if (data.length >= 1) {
-                var total = table.column(6, { page: 'current' }).data().sum();
+                var total = table.column(8, { page: 'current' }).data().sum();
                 $("#totalAcreage").html('<br>Total Acreage of Selected Leases: ' + total.toFixed(2));
                 console.log(total);
             }
