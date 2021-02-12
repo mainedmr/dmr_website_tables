@@ -360,11 +360,12 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 <th width=10>Latitude</th>
                 <th width=10>Longitude</th>
                 <th width=10>Species</th>
-                <th width=10>Lease Type</th>
                 <th width=10>Status</th>
                 <th width=10>Purpose</th>
                 <th width=10>Location</th>
+                <th width=10>Waterbody</th>
                 <th width=10>Town</th>
+                <th width=10>Gear Type</th>
             </tr>
         </thead>
         <!-- Include tfoot tag if using search fields at bottom of table, and put field names in. -->
@@ -376,11 +377,12 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 <th>Latitude</th>
                 <th>Longitude</th>
                 <th>Species</th>
-                <th>Lease Type</th>
                 <th>Status</th>
                 <th>Purpose</th>
                 <th>Location</th>
+                <th>Waterbody</th>
                 <th>Town</th>
+                <th>Gear Type</th>
             </tr>
         </tfoot>
         <tbody>
@@ -458,11 +460,12 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 { data: "attributes.Latitude" },
                 { data: "attributes.Longitude" },
                 { data: "attributes.Species" },
-                { data: "attributes.LeaseType" },
+                { data: "attributes.Status" },
                 { data: "attributes.Purpose" },
                 { data: "attributes.Location" },
                 { data: "attributes.WaterBody" },
-                { data: "attributes.Site_Town" }
+                { data: "attributes.Site_Town" },
+                { data: "attributes.Gear" }
             ],
             "language": {
                 "emptyTable": "Loading...",
