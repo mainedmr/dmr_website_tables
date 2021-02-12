@@ -196,7 +196,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     // Expiration is in UNIX time, microseconds since Jan 1, 1970 
                     render: function(data, type, row) {
                         var exp_date = new Date(data); // Convert UNIX Epoch to date
-                        return exp_date.getFullYear(); // Return full year from date
+                        return (exp_date.getMonth() + 1) + '/' + exp_date.getDate() + '/' + exp_date.getFullYear(); // Return local date
                     }
                 },
                 {
