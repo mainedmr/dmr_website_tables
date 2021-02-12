@@ -21,7 +21,7 @@
 <body>
     <!-- Heading for above the table -->
     <link href="https://www.maine.gov/awt/js/datatables/css/jquery.dataTables.css" rel="stylesheet" type="text/css" media="screen,projection" />
-    <h3 id="lease_list_h">List of aquaculture leases.</h3>
+    <h3 id="lease_list_h">List of standard and experimental aquaculture leases.</h3>
     Click the Leaseholder name to open the lease decision PDF in a new tab. Click the Site ID to view the lease on the DMR Aquaculture Map app.
     <!-- Include this style tag if adding search fields at the bottom of the table -->
     <style type="text/css" class="init">
@@ -100,6 +100,9 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
         </tbody>
     </table>
     <div id="totalAcreage"></div>
+    <br>
+    Leases with the status “Pending” are either standard leases in the application process for renewal, or experimental leases in the application process for conversion to a standard lease.
+
     <!-- JavaScript to populate table starts here -->
     <script type='text/javascript'>
     jQuery.fn.dataTable.Api.register('sum()', function() {
