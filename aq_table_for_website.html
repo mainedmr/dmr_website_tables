@@ -57,15 +57,6 @@
                 <option value="T">Terminated</option>
                 <option value="">All</option>
             </select>
-            <label for="selType" style="font-size: 9pt">Select Lease Type:</label>
-            <select name="selType" id="selType" onchange="ChangeType()" style="font-size: 9pt">
-                <option selected="selected" value="">All</option>
-                <option value="S">Shellfish</option>
-                <option value="E">Experimental</option>
-                <option value="F">Finfish</option>
-                <option value="W">Seaweed</option>
-                <option value="D">Standard</option>
-            </select>
         </form>
     </p>
     <style type="text/css" class="init">
@@ -85,6 +76,8 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 <th width=10>Leaseholder</th>
                 <th width=10>Site ID</th>
                 <th width=10>Primary Species</th>
+                <th width=10>Lease Type</th>
+                <th width=10>Lease Status</th>
                 <th width=10>Waterbody</th>
                 <th width=10>Town</th>
                 <th width=10>Expires</th>
@@ -97,6 +90,8 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 <th>Leaseholder</th>
                 <th>Site ID</th>
                 <th>Primary Species</th>
+                <th>Lease Type</th>
+                <th>Lease Status</th>
                 <th>Waterbody</th>
                 <th>Town</th>
                 <th>Expires</th>
@@ -164,8 +159,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             "scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating	 		
             "ajax": { // Load data from AJAX data source (JSON)
                 "url": "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27%25" +
-                    document.formSelectors.selStatus.value + "%25%27+AND+LEASE_TYPE+Like+%27%25" +
-                    document.formSelectors.selType.value +
+                    document.formSelectors.selStatus.value + 
                     "%25%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson", // JSON URL
                 "dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
             },
@@ -190,8 +184,10 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                         return '<a href="' + aq_map_url + '&query=' + lease_layer_id + ',SITE_ID,' + data.SITE_ID +
                             '" target="_blank">' + data.SITE_ID + '</a>'
                     }
-                },
+                },                
                 { data: "attributes.PRIMARYSP" },
+                { data: "attributes.LEASE_TYPE" },
+                { data: "attributes.STATUS" },
                 { data: "attributes.WATERBODY" },
                 { data: "attributes.CITY" },
                 {
@@ -240,21 +236,10 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
         table.clear();
         table.draw();
         table.ajax.url("https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27%25" +
-            document.formSelectors.selStatus.value + "%25%27+AND+LEASE_TYPE+Like+%27%25" +
-            document.formSelectors.selType.value +
+            document.formSelectors.selStatus.value + 
             "%25%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson").load();
     }
 
-    function ChangeType() {
-        // Get new data when the lease type selector changes
-        var table = $('#lease_table').DataTable();
-        table.clear();
-        table.draw();
-        table.ajax.url("https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27%25" +
-            document.formSelectors.selStatus.value + "%25%27+AND+LEASE_TYPE+Like+%27%25" +
-            document.formSelectors.selType.value +
-            "%25%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson").load();
-    }
     </script>
     <!-- Heading for above the lease applications under review table -->
     <h3 id="review_list_h">List of lease applications under review.</h3>
