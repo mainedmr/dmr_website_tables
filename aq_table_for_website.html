@@ -51,11 +51,9 @@
         <form name="formSelectors">
             <label for="selStatus" style="font-size: 9pt">Select Lease Status:</label>
             <select name="selStatus" id="selStatus" onchange="ChangeStatus()" style="font-size: 9pt">
-                <option selected="selected" value="A">Active</option>
-                <option value="E">Expired</option>
-                <option value="P">Renewal or Standard Application Pending</option>
-                <option value="T">Terminated</option>
-                <option value="">All</option>
+                <option selected="selected" value="%27A%27+OR+STATUS+LIKE+%27P%27">Active and Pending</option>
+                <option value="%27E%27+OR+STATUS+LIKE+%27T%27">Terminated or Expired</option>
+                <option value="%27%25%25%27">All</option>
             </select>
         </form>
     </p>
@@ -158,9 +156,9 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
             "scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating	 		
             "ajax": { // Load data from AJAX data source (JSON)
-                "url": "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27%25" +
+                "url": "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+" +
                     document.formSelectors.selStatus.value + 
-                    "%25%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson", // JSON URL
+                    "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson", // JSON URL
                 "dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
             },
             "columns": [ // Location within the JSON of each column to pipe into the HTML table, in order of columns. For AGOL items, fields stored within attributes array of JSON.
@@ -235,9 +233,9 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
         var table = $('#lease_table').DataTable();
         table.clear();
         table.draw();
-        table.ajax.url("https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27%25" +
+        table.ajax.url("https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+" +
             document.formSelectors.selStatus.value + 
-            "%25%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson").load();
+            "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson").load();
     }
 
     </script>
