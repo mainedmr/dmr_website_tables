@@ -1,0 +1,165 @@
+<!-- Template for integrating an ArcGIS table into another website and adding buttons for download (ie, maine.gov) -->
+
+
+
+
+<!-- Have to do this to support Internet Explorer -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Must include references to jQuery 1.10 and jQuery datatables -->
+<script type="text/javascript" src="http://www.maine.gov/awt/js5/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include these references if using export buttons -->
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+
+<!-- Prebuilt CSS styles for data tables -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<!-- CSS styles for export buttons -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
+
+<html>
+<body>
+
+<!-- Heading for above the table -->
+<link href="https://www.maine.gov/awt/js/datatables/css/jquery.dataTables.css" rel="stylesheet" type="text/css" media="screen,projection" />
+<h3 id="landings_list_h">List of aquaculture leases.</h3>
+
+
+<!-- Include this style tag if adding search fields at the bottom of the table -->
+  <style type="text/css" class="init">
+  tfoot input {
+    width: 100%;
+    font-size: 8pt;
+    padding: 1px;
+    box-sizing: border-box;
+  }
+  </style>
+
+<!-- Optionally set custom CSS for table here. For help see here: https://www.w3schools.com/css/css_table.asp -->
+<style type="text/css" class="custom_table">
+  table {
+    border-collapse: collapse;
+  }
+  th {
+    text-align: center;
+  }
+  td {
+    text-align: center;
+  }
+</style>
+
+
+<!-- Set table ID here and build HTML table. Use DataTables CSS options from https://datatables.net/manual/styling/classes
+or use class = "custom_table" if only using CSS defined in custom CSS above  -->
+	  <table id="landings_table" class="dataTable" cellspacing="0" width="100%">	
+		<thead>
+			<tr>
+<!-- Add the column header names for the table here	-->			
+				<th width=10>Leaseholder</th>
+				<th width=10>Primary Species</th>
+				<th width=10>Waterbody</th>
+        <th width=10>Town</th>
+        <th width=10>Expires</th>
+        <th width=10>Acreage</th>
+			</tr>
+		</thead>
+<!-- Include tfoot tag if using search fields at bottom of table, and put field names in. -->
+    <tfoot>
+      <tr>
+        <th>Leaseholder</th>
+        <th>Primary Species</th>
+        <th>Waterbody</th>
+        <th>Town</th>
+        <th>Expires</th>
+        <th>Acreage</th>
+      </tr>
+    </tfoot> 		
+        <tbody>		
+        </tbody> 
+    </table>
+<!-- JavaScript to populate table starts here -->
+  <script type='text/javascript'> 
+	$(document).ready(function() {
+    // Setup - add a text input to each footer cell. Omit this if no search fields needed.
+    $('#landings_table tfoot th').each( function () { // Change table element ID here
+      var title = $('#landings_table thead th').eq( $(this).index() ).text(); // Change table element ID here
+      $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+    // Put in URL to AGOL JSON, build using ArcGIS REST endpoint query tool (query 1=1, fields = *)
+    var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=status+%3D+%27P%27+OR+status+%3D+%27A%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson";  
+    // DataTable settings - for more help see here: https://datatables.net/reference/option/
+		var table = $('#landings_table').DataTable({ // Change table element ID here
+        dom: 'Bfrtip', // Add this to enable export buttons
+        buttons: [ // Add this to choose which buttons to display
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+        "autoWidth": true, // Feature control DataTables' smart column width handling
+        "deferRender": true, // Feature control deferred rendering for additional speed of initialisation.
+        "info": true, // Display info about table including filtering
+        "lengthChange": false, // If pagination is enabled, allow the page length to be changed by user
+        "ordering": true, // Toggle user ordering of table columns
+        "paging": false, // Toggle table paging
+        "processing": true, // Toggle "processing" indicator useful when loading large table/filter
+        "scrollX": false, // Left/right scrolling option, in pixels or false to disable
+				"scrollY": "400px", // Table height in pixels before up/down scrolling, or false to disable scrolling
+        "searching": true, // Toggle search all columns field
+        "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
+				"scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating	 		
+				
+				"ajax": { // Load data from AJAX data source (JSON)
+					"url": url, // JSON URL
+					"dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
+				},
+				"columns": [ // Location within the JSON of each column to pipe into the HTML table, in order of columns. For AGOL items, fields stored within attributes array of JSON.
+					{ data: "attributes",
+            render: function (data, type, row) {
+              // Generate HTML link using URL and and leaseholder name if URL is not null, or just leaseholder if no URL is present
+              if (data.decision_url == null) {
+                return data.LEASEHOLDE
+              } else {
+                return '<a href="' + data.decision_url + '" target="_blank">' + data.LEASEHOLDE + '</a>'
+              }              
+            }
+          },
+					{ data: "attributes.PRIMARYSP"},
+          { data: "attributes.WATERBODY"},
+          { data: "attributes.CITY"},
+					{ data: "attributes.EXPIRATION",
+            // Expiration is in UNIX time, microseconds since Jan 1, 1970 
+            render: function (data, type, row) {
+              var exp_date = new Date(data); // Convert UNIX Epoch to date
+              return exp_date.getFullYear(); // Return full year from date
+            }
+          }, 
+          { data: "attributes.Acres", 
+            render: $.fn.dataTable.render.number( ',', '.', 1)} // Use helper to format with commas and round to one decimal place, see here: https://datatables.net/manual/data/renderers#Number-helper
+					],
+				"language": {
+				  "emptyTable": "Loading...",
+				  "search": "Search all fields:"
+				}
+		});
+    // Apply the search, if using search fields for each column; remove if not using.
+    table.columns().every( function () {
+      var that = this;
+      $( 'input', this.footer() ).on( 'keyup change', function () {
+        that
+          .search( this.value )
+          .draw();
+      });
+    }); // Remove up to here if not using field searches
+	});	
+	</script>
+
+</body>
+</html>
+
+
+	
