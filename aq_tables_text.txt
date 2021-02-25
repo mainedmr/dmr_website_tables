@@ -1,8 +1,4 @@
-<!-- Template for integrating an ArcGIS table into another website and adding buttons for download (ie, maine.gov) -->
-<!-- Have to do this to support Internet Explorer -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Must include references to jQuery 1.10 and jQuery datatables -->
-<script type="text/javascript" src="http://www.maine.gov/awt/js5/jquery-1.10.2.min.js"></script>
+
 <script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <!-- Include these references if using export buttons -->
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
@@ -16,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 <!-- CSS styles for export buttons -->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
-<html>
+
 
 <body>
     <!-- Heading for above the table -->
@@ -279,12 +275,12 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 // CSV options
                 {
                     extend: 'csvHtml5',
-                    title: 'dmr_aq_review_export'
+                    title: 'dmr_aq_lpas_export'
                 },
                 // Excel options
                 {
                     extend: 'excelHtml5',
-                    title: 'dmr_aq_review_export'
+                    title: 'dmr_aq_lpas_export'
                 },
                 'print',
                 // PDF options
@@ -292,7 +288,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     extend: 'pdfHtml5',
                     orientation: 'landscape',
                     pageSize: 'LETTER',
-                    title: 'dmr_aq_review_export'
+                    title: 'dmr_aq_lpas_export'
                 }
             ],
             "autoWidth": true, // Feature control DataTables' smart column width handling
@@ -488,5 +484,3 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
     });
     </script>
 </body>
-
-</html>
