@@ -34,6 +34,11 @@
     </style>
     <!-- Optionally set custom CSS for table here. For help see here: https://www.w3schools.com/css/css_table.asp -->
     <style type="text/css" class="custom_table">
+    div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+    }
     table {
         border-collapse: collapse;
     }
@@ -45,6 +50,7 @@
     td {
         text-align: center;
     }
+    
     </style>
     <!-- Dropdown selector for lease status  -->
     <p>
@@ -105,6 +111,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
 
     <!-- JavaScript to populate table starts here -->
     <script type='text/javascript'>
+    // Register sum function with jquery api
     jQuery.fn.dataTable.Api.register('sum()', function() {
         return this.flatten().reduce(function(a, b) {
             return (a * 1) + (b * 1); // cast values in-case they are strings
@@ -146,14 +153,15 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     title: 'dmr_aq_leases_export'
                 }
             ],
-            "autoWidth": true, // Feature control DataTables' smart column width handling
+            "autoWidth": false, // Feature control DataTables' smart column width handling
             "deferRender": true, // Feature control deferred rendering for additional speed of initialisation.
             "info": true, // Display info about table including filtering
             "lengthChange": false, // If pagination is enabled, allow the page length to be changed by user
             "ordering": true, // Toggle user ordering of table columns
             "paging": false, // Toggle table paging
             "processing": true, // Toggle "processing" indicator useful when loading large table/filter
-            "scrollX": false, // Left/right scrolling option, in pixels or false to disable
+            "scrollX": true, // Left/right scrolling option, in pixels or false to disable
+            "sScrollX": "100%",
             "scrollY": "400px", // Table height in pixels before up/down scrolling, or false to disable scrolling
             "searching": true, // Toggle search all columns field
             "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
@@ -295,14 +303,15 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     title: 'dmr_aq_review_export'
                 }
             ],
-            "autoWidth": true, // Feature control DataTables' smart column width handling
+            "autoWidth": false, // Feature control DataTables' smart column width handling
             "deferRender": true, // Feature control deferred rendering for additional speed of initialisation.
             "info": true, // Display info about table including filtering
             "lengthChange": false, // If pagination is enabled, allow the page length to be changed by user
             "ordering": true, // Toggle user ordering of table columns
             "paging": false, // Toggle table paging
             "processing": true, // Toggle "processing" indicator useful when loading large table/filter
-            "scrollX": false, // Left/right scrolling option, in pixels or false to disable
+            "scrollX": true, // Left/right scrolling option, in pixels or false to disable
+            "sScrollX": "100%",
             "scrollY": "400px", // Table height in pixels before up/down scrolling, or false to disable scrolling
             "searching": true, // Toggle search all columns field
             "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
@@ -428,21 +437,19 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     title: 'dmr_aq_lpas_export'
                 }
             ],
-            "autoWidth": true, // Feature control DataTables' smart column width handling
+            "autoWidth": false, // Feature control DataTables' smart column width handling
             "deferRender": true, // Feature control deferred rendering for additional speed of initialisation.
             "info": true, // Display info about table including filtering
             "lengthChange": false, // If pagination is enabled, allow the page length to be changed by user
             "ordering": true, // Toggle user ordering of table columns
             "paging": false, // Toggle table paging
             "processing": true, // Toggle "processing" indicator useful when loading large table/filter
-            "scrollX": false, // Left/right scrolling option, in pixels or false to disable
+            "scrollX": true, // Left/right scrolling option, in pixels or false to disable
+            "sScrollX": "100%",
             "scrollY": "400px", // Table height in pixels before up/down scrolling, or false to disable scrolling
             "searching": true, // Toggle search all columns field
             "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
             "scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating	 		
-            "initComplete": function(settings, json) {
-                $("#lpa_table").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-            },
             "ajax": { // Load data from AJAX data source (JSON)
                 "url": url, // JSON URL
                 "dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
