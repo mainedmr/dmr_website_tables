@@ -260,6 +260,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 <th width=10>Latitude</th>
                 <th width=10>Longitude</th>
                 <th width=10>Link to Map</th>
+                <th width=10>Link to Site Review</th>
             </tr>
         </thead>
         <tbody>
@@ -342,6 +343,19 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                             '" target="_blank">View on AQ map</a>'
                     }
                 },
+                // Create a link to the site report
+                {
+                    data: "attributes",
+                    render: function(data, type, row) {
+                        // Generate HTML link using URL if present, or null
+                        if (data.Link_To_SR == null) {
+                            return 'No Site Report'
+                        } else {
+                            return '<a href="' + data.Link_To_SR + '" target="_blank">' + 
+                            'SR for ' + data.DMR_App_ID + '</a>'
+                        }
+                    }
+                }
             ],
             "language": {
                 "emptyTable": "Loading...",
