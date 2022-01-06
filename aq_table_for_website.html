@@ -204,8 +204,10 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 },
                 {
                     data: "attributes.Acres",
-                    render: $.fn.dataTable.render.number(',', '.', 2)
-                } // Use helper to format with commas and round to one decimal place, see here: https://datatables.net/manual/data/renderers#Number-helper
+                    render: function(data, type, row) {
+                        return Math.round(data * 100)/100; // Round acreage to two decimal places
+                    }
+                }
             ],
             "language": {
                 "emptyTable": "Loading...",
@@ -226,7 +228,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             var data = table.column(8, { page: 'current' }).data()
             if (data.length >= 1) {
                 var total = table.column(8, { page: 'current' }).data().sum();
-                $("#totalAcreage").html('<br>Total Acreage of Selected Leases: ' + total.toFixed(2));
+                $("#totalAcreage").html('<br>Total Acreage of Selected Leases: ' + Math.round(total * 100)/100);
                 console.log(total);
             }
         });
