@@ -1,9 +1,9 @@
 <!-- Template for integrating an ArcGIS table into another website and adding buttons for download (ie, maine.gov) -->
 <!-- Have to do this to support Internet Explorer -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Must include references to jQuery 1.10 and jQuery datatables -->
-<script type="text/javascript" src="http://www.maine.gov/awt/js5/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<!-- Must include references to jQuery 3.6 and jQuery datatables -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <!-- Include these references if using export buttons -->
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
@@ -21,7 +21,7 @@
 <body>
     <!-- Heading for above the table -->
     <link href="https://www.maine.gov/awt/js/datatables/css/jquery.dataTables.css" rel="stylesheet" type="text/css" media="screen,projection" />
-    <h3 id="lease_list_h">List of standard and experimental aquaculture leases.</h3>
+    <h3 id="lease_list_h">List of Active and Pending status standard and experimental aquaculture leases.</h3>
     Click the Leaseholder name to open the lease decision PDF in a new tab. Click the Site ID to view the lease on the DMR Aquaculture Map app.
     <!-- Include this style tag if adding search fields at the bottom of the table -->
     <style type="text/css" class="init">
@@ -46,19 +46,6 @@
     td {
         text-align: center;
     }
-    </style>
-    <!-- Dropdown selector for lease status  -->
-    <p>
-        <form name="formSelectors">
-            <label for="selStatus" style="font-size: 9pt">Select Lease Status:</label>
-            <select name="selStatus" id="selStatus" onchange="ChangeStatus()" style="font-size: 9pt">
-                <option selected="selected" value="%27A%27+OR+STATUS+LIKE+%27P%27">Active and Pending</option>
-                <option value="%27E%27+OR+STATUS+LIKE+%27T%27">Terminated or Expired</option>
-                <option value="%27%25%25%27">All</option>
-            </select>
-        </form>
-    </p>
-    <style type="text/css" class="init">
     tfoot input {
         width: 100%;
         font-size: 8pt;
@@ -68,7 +55,7 @@
     </style>
     <!-- Set table ID here and build HTML table. Use DataTables CSS options from https://datatables.net/manual/styling/classes
 or use class = "custom_table" if only using CSS defined in custom CSS above  -->
-    <table id="lease_table" class="dataTable" cellspacing="0" width="100%">
+    <table id="lease_table_active" class="dataTable" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <!-- Add the column header names for the table here	-->
@@ -115,9 +102,12 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
 
 
     $(document).ready(function() {
+        // URL to get just Active/Pending leases where=STATUS LIKE A OR STATUS LIKE P. All fields, No geometry, format is pjson
+        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27A%27+OR+STATUS+LIKE+%27P%27&outFields=*&returnGeometry=false&f=pjson";
+
         // Setup - add a text input to each footer cell. Omit this if no search fields needed.
-        $('#lease_table tfoot th').each(function() { // Change table element ID here
-            var title = $('#lease_table thead th').eq($(this).index()).text(); // Change table element ID here
+        $('#lease_table_active tfoot th').each(function() { // Change table element ID here
+            var title = $('#lease_table_active thead th').eq($(this).index()).text(); // Change table element ID here
             $(this).html('<input type="text" placeholder="Search ' + title + '" />');
         });
         // URL to AQ web app
@@ -125,7 +115,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
         // Layer ID of the AQ Lease layer in the AQ map
         var lease_layer_id = 'DMR_Aquaculture_9346';
         // DataTable settings - for more help see here: https://datatables.net/reference/option/
-        var table = $('#lease_table').DataTable({ // Change table element ID here
+        var table = $('#lease_table_active').DataTable({ // Change table element ID here
             dom: 'Bfrtip', // Add this to enable export buttons
             buttons: [ // Add this to choose which buttons to display
                 'copy',
@@ -162,9 +152,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
             "scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating	 		
             "ajax": { // Load data from AJAX data source (JSON)
-                "url": "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+" +
-                    document.formSelectors.selStatus.value + 
-                    "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson", // JSON URL
+                "url": url, // JSON URL
                 "dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
             },
             "columns": [ // Location within the JSON of each column to pipe into the HTML table, in order of columns. For AGOL items, fields stored within attributes array of JSON.
@@ -224,7 +212,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             });
         }); // Remove up to here if not using field searches
 
-        $("#lease_table").on('search.dt', function() {
+        $("#lease_table_active").on('search.dt', function() {
             var data = table.column(8, { page: 'current' }).data()
             if (data.length >= 1) {
                 var total = table.column(8, { page: 'current' }).data().sum();
@@ -236,17 +224,217 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
 
 
 
-    function ChangeStatus() {
-        // Get new data when the lease status selector changes
-        var table = $('#lease_table').DataTable();
-        table.clear();
-        table.draw();
-        table.ajax.url("https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+" +
-            document.formSelectors.selStatus.value + 
-            "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson").load();
+    </script>
+
+
+
+
+
+
+<!-- Heading for above the table -->
+    <link href="https://www.maine.gov/awt/js/datatables/css/jquery.dataTables.css" rel="stylesheet" type="text/css" media="screen,projection" />
+    <h3 id="lease_list_h2">List of Expired and Terminated status standard and experimental aquaculture leases.</h3>
+    Click the Leaseholder name to open the lease decision PDF in a new tab. Click the Site ID to view the lease on the DMR Aquaculture Map app.
+    <!-- Include this style tag if adding search fields at the bottom of the table -->
+    <style type="text/css" class="init">
+    tfoot input {
+        width: 100%;
+        font-size: 8pt;
+        padding: 1px;
+        box-sizing: border-box;
+    }
+    </style>
+    <!-- Optionally set custom CSS for table here. For help see here: https://www.w3schools.com/css/css_table.asp -->
+    <style type="text/css">
+    div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+    }
+    th {
+        text-align: center;
     }
 
+    td {
+        text-align: center;
+    }
+    tfoot input {
+        width: 100%;
+        font-size: 8pt;
+        padding: 1px;
+        box-sizing: border-box;
+    }
+    </style>
+    <!-- Set table ID here and build HTML table. Use DataTables CSS options from https://datatables.net/manual/styling/classes
+or use class = "custom_table" if only using CSS defined in custom CSS above  -->
+    <table id="lease_table_ex" class="dataTable" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <!-- Add the column header names for the table here -->
+                <th width=10>Leaseholder</th>
+                <th width=10>Site ID</th>
+                <th width=10>Primary Species</th>
+                <th width=10>Lease Type</th>
+                <th width=10>Lease Status</th>
+                <th width=10>Waterbody</th>
+                <th width=10>Town</th>
+                <th width=10>Expires</th>
+                <th width=10>Acreage</th>
+            </tr>
+        </thead>
+        <!-- Include tfoot tag if using search fields at bottom of table, and put field names in. -->
+        <tfoot>
+            <tr>
+                <th>Leaseholder</th>
+                <th>Site ID</th>
+                <th>Primary Species</th>
+                <th>Lease Type</th>
+                <th>Lease Status</th>
+                <th>Waterbody</th>
+                <th>Town</th>
+                <th>Expires</th>
+                <th>Acreage</th>
+            </tr>
+        </tfoot>
+        <tbody>
+        </tbody>
+    </table>
+    <div id="totalAcreage2"></div>
+
+    <!-- JavaScript to populate table starts here -->
+    <script type='text/javascript'>
+
+    $(document).ready(function() {
+        // URL to get just Active/Pending leases where=STATUS LIKE T OR STATUS LIKE E. All fields, No geometry, format is pjson
+        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+%27E%27+OR+STATUS+LIKE+%27T%27&outFields=*&returnGeometry=false&f=pjson";
+
+        // Setup - add a text input to each footer cell. Omit this if no search fields needed.
+        $('#lease_table_ex tfoot th').each(function() { // Change table element ID here
+            var title = $('#lease_table_ex thead th').eq($(this).index()).text(); // Change table element ID here
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        });
+        // URL to AQ web app
+        var aq_map_url = 'https://maine.maps.arcgis.com/apps/webappviewer/index.html?id=b846cf37b1d64c988f89eafa085c8b7a';
+        // Layer ID of the AQ Lease layer in the AQ map
+        var lease_layer_id = 'DMR_Aquaculture_9346';
+        // DataTable settings - for more help see here: https://datatables.net/reference/option/
+        var table = $('#lease_table_ex').DataTable({ // Change table element ID here
+            dom: 'Bfrtip', // Add this to enable export buttons
+            buttons: [ // Add this to choose which buttons to display
+                'copy',
+                // CSV options
+                {
+                    extend: 'csvHtml5',
+                    title: 'dmr_aq_leases_export'
+                },
+                // Excel options
+                {
+                    extend: 'excelHtml5',
+                    title: 'dmr_aq_leases_export'
+                },
+                'print',
+                // PDF options
+                {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LETTER',
+                    title: 'dmr_aq_leases_export'
+                }
+            ],
+            "autoWidth": false, // Feature control DataTables' smart column width handling
+            "deferRender": true, // Feature control deferred rendering for additional speed of initialisation.
+            "info": true, // Display info about table including filtering
+            "lengthChange": false, // If pagination is enabled, allow the page length to be changed by user
+            "ordering": true, // Toggle user ordering of table columns
+            "paging": false, // Toggle table paging
+            "processing": true, // Toggle "processing" indicator useful when loading large table/filter
+            "scrollX": true, // Left/right scrolling option, in pixels or false to disable
+            "sScrollX": "100%",
+            "scrollY": "400px", // Table height in pixels before up/down scrolling, or false to disable scrolling
+            "searching": true, // Toggle search all columns field
+            "stateSave": false, // If true, table will restore to user filtered state when page is reopened                 
+            "scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating         
+            "ajax": { // Load data from AJAX data source (JSON)
+                "url": url, // JSON URL
+                "dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
+            },
+            "columns": [ // Location within the JSON of each column to pipe into the HTML table, in order of columns. For AGOL items, fields stored within attributes array of JSON.
+                // Create a link to the lease PDF
+                {
+                    data: "attributes",
+                    render: function(data, type, row) {
+                        // Generate HTML link using URL and and leaseholder name if URL is not null, or just leaseholder if no URL is present
+                        if (data.decision_url == null) {
+                            return data.LEASEHOLDE
+                        } else {
+                            return '<a href="' + data.decision_url + '" target="_blank">' + data.LEASEHOLDE + '</a>'
+                        }
+                    }
+                },
+                // Create a link to the AQ map
+                {
+                    data: "attributes",
+                    render: function(data, type, row) {
+                        // Generate HTML link to AQ web app for given site ID
+                        return '<a href="' + aq_map_url + '&query=' + lease_layer_id + ',SITE_ID,' + data.SITE_ID +
+                            '" target="_blank">' + data.SITE_ID + '</a>'
+                    }
+                },                
+                { data: "attributes.PRIMARYSP" },
+                { data: "attributes.LEASE_TYPE" },
+                { data: "attributes.STATUS" },
+                { data: "attributes.WATERBODY" },
+                { data: "attributes.CITY" },
+                {
+                    data: "attributes.EXPIRATION",
+                    // Expiration is in UNIX time, microseconds since Jan 1, 1970 
+                    render: function(data, type, row) {
+                        var exp_date = new Date(data); // Convert UNIX Epoch to date
+                        return (exp_date.getMonth() + 1) + '/' + exp_date.getDate() + '/' + exp_date.getFullYear(); // Return local date
+                    }
+                },
+                {
+                    data: "attributes.Acres",
+                    render: function(data, type, row) {
+                        return Math.round(data * 100)/100; // Round acreage to two decimal places
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "Loading...",
+                "search": "Search all fields:"
+            }
+        });
+        // Apply the search to all fields, if using search fields for each column; remove if not using.
+        table.columns().every(function() {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function() {
+                that
+                    .search(this.value)
+                    .draw();
+            });
+        }); // Remove up to here if not using field searches
+
+        $("#lease_table_ex").on('search.dt', function() {
+            var data = table.column(8, { page: 'current' }).data()
+            if (data.length >= 1) {
+                var total = table.column(8, { page: 'current' }).data().sum();
+                $("#totalAcreage2").html('<br>Total Acreage of Selected Leases: ' + Math.round(total * 100)/100);
+                console.log(total);
+            }
+        });
+    });
+
+
+
     </script>
+
+
+
+
+
+
+
     <!-- Heading for above the lease applications under review table -->
     <h3 id="review_list_h">List of lease applications under review.</h3>
     Click links in the application ID column to open a PDF of the application in a new tab.
@@ -272,7 +460,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
     <script type='text/javascript'>
     $(document).ready(function() {
         // Put in URL to AGOL JSON, build using ArcGIS REST endpoint query tool (query 1=1, fields = *)
-        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson";
+        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&f=pjson";
         // URL to AQ web app
         var aq_map_url = 'https://maine.maps.arcgis.com/apps/webappviewer/index.html?id=b846cf37b1d64c988f89eafa085c8b7a';
         // Layer ID of the review layer in the AQ map
@@ -419,7 +607,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             $(this).html('<input type="text" placeholder="Search ' + title + '" />');
         });
         // Put in URL to AGOL JSON, build using ArcGIS REST endpoint query tool (query 1=1, fields = *)
-        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/1/query?where=STATUS%3D%27A%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=SITE_ID&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson";
+        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/1/query?where=STATUS%3D%27A%27&outFields=*&returnGeometry=false&orderByFields=SITE_ID&f=pjson";
         // URL to AQ web app
         var aq_map_url = 'https://maine.maps.arcgis.com/apps/webappviewer/index.html?id=b846cf37b1d64c988f89eafa085c8b7a';
         // Layer ID of the AQ Lease layer in the AQ map
