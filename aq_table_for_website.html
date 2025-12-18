@@ -121,9 +121,9 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             $(this).html('<input type="text" placeholder="Search ' + title + '" />');
         });
         // URL to AQ web app
-        var aq_map_url = 'https://maine.maps.arcgis.com/apps/webappviewer/index.html?id=b846cf37b1d64c988f89eafa085c8b7a';
-        // Layer ID of the AQ Lease layer in the AQ map
-        var lease_layer_id = 'DMR_Aquaculture_9346';
+        var aq_map_url = 'https://experience.arcgis.com/experience/12b3838db40b4484a6b39858528749ed';
+        // Query string
+        var query_string = '#data_s=where:13fa6ea6032449f7849ce430f879a454-197655a67d5-layer-39:SITE_ID=';
         // DataTable settings - for more help see here: https://datatables.net/reference/option/
         var table = $('#lease_table').DataTable({ // Change table element ID here
             dom: 'Bfrtip', // Add this to enable export buttons
@@ -162,7 +162,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
             "stateSave": false, // If true, table will restore to user filtered state when page is reopened 				
             "scrollCollapse": true, // If true, the table will be collapsed if the height of the records is < the scrollY option; prevents footer from floating	 		
             "ajax": { // Load data from AJAX data source (JSON)
-                "url": "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+" +
+                "url": "https://gis.maine.gov/mapservices/rest/services/dmr/DMR_Aquaculture/MapServer/2/query?where=STATUS+Like+" +
                     document.formSelectors.selStatus.value + 
                     "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson", // JSON URL
                 "dataSrc": "features" // Within the JSON, the source for the data. For AGOL tables this will be "features"
@@ -185,7 +185,7 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     data: "attributes",
                     render: function(data, type, row) {
                         // Generate HTML link to AQ web app for given site ID
-                        return '<a href="' + aq_map_url + '&query=' + lease_layer_id + ',SITE_ID,' + data.SITE_ID +
+                        return '<a href="' + aq_map_url + query_string + "'" + data.SITE_ID + "'" +
                             '" target="_blank">' + data.SITE_ID + '</a>'
                     }
                 },                
