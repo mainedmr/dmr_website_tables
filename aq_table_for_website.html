@@ -259,9 +259,8 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 <th width=10>Application ID</th>
                 <th width=10>Applicant</th>
                 <th width=10>Type</th>
-                <th width=10>Latitude</th>
-                <th width=10>Longitude</th>
                 <th width=10>Link to Map</th>
+                <th width=10>Link to Application</th>
                 <th width=10>Link to Site Report</th>
             </tr>
         </thead>
@@ -272,11 +271,11 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
     <script type='text/javascript'>
     $(document).ready(function() {
         // Put in URL to AGOL JSON, build using ArcGIS REST endpoint query tool (query 1=1, fields = *)
-        var url = "https://gis.maine.gov/arcgis/rest/services/dmr/DMR_Aquaculture/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson";
+        var url = "https://services1.arcgis.com/RbMX0mRVOFNTdLzd/arcgis/rest/services/AQ_Lease_Apps_Under_Review_POLY_3_view/FeatureServer/15/query?where=1%3D1&outFields=*&f=pjson";
         // URL to AQ web app
-        var aq_map_url = 'https://maine.maps.arcgis.com/apps/webappviewer/index.html?id=b846cf37b1d64c988f89eafa085c8b7a';
-        // Layer ID of the review layer in the AQ map
-        var review_layer_id = 'DMR_Aquaculture_7420';
+        var aq_map_url = 'https://experience.arcgis.com/experience/12b3838db40b4484a6b39858528749ed';
+        // Query string
+        var query_string = '#data_s=where:13fa6ea6032449f7849ce430f879a454-18fa131ba23-layer-30:DMR_App_ID=';
         // DataTable settings - for more help see here: https://datatables.net/reference/option/
         var table = $('#review_table').DataTable({ // Change table element ID here
             dom: 'Bfrtip', // Add this to enable export buttons
@@ -334,15 +333,29 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                 },
                 { data: "attributes.Applicant" },
                 { data: "attributes.App_Type" },
-                { data: "attributes.Latitude" },
-                { data: "attributes.Longitude" },
                 // Create a link to the AQ map
                 {
                     data: "attributes",
                     render: function(data, type, row) {
                         // Generate HTML link to AQ web app for given site ID
-                        return '<a href="' + aq_map_url + '&query=' + review_layer_id + ',DMR_App_ID,' + data.DMR_App_ID +
+                        return '<a href="' + aq_map_url + query_string + "'" + data.DMR_App_ID + "'" +
                             '" target="_blank">View on AQ map</a>'
+                    }
+                },
+                // Create a link to the application
+                {
+                    data: "attributes",
+                    render: function(data, type, row) {
+                        // Generate HTML link using URL if present, or null
+                        if (data.Link_To_App == null) {
+                            return 'No Application'
+                        } else if (!(data.Link_To_App.startsWith("http"))) {
+                            return 'No Application'
+                        }
+                        else {
+                            return '<a href="' + data.Link_To_App + '" target="_blank">' + 
+                            'App for ' + data.DMR_App_ID + '</a>'
+                        }
                     }
                 },
                 // Create a link to the site report
@@ -350,9 +363,12 @@ or use class = "custom_table" if only using CSS defined in custom CSS above  -->
                     data: "attributes",
                     render: function(data, type, row) {
                         // Generate HTML link using URL if present, or null
-                        if (!(data.Link_To_SR.startsWith("http"))) {
+                        if (data.Link_To_SR == null) {
                             return 'No Site Report'
-                        } else {
+                        } else if (!(data.Link_To_SR.startsWith("http"))) {
+                            return 'No Site Report'
+                        }
+                        else {
                             return '<a href="' + data.Link_To_SR + '" target="_blank">' + 
                             'SR for ' + data.DMR_App_ID + '</a>'
                         }
