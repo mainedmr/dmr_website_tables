@@ -1,0 +1,89 @@
+<html>
+    <script type="text/javascript" src="aq_tables_shared.js"></script>
+    <script type="text/javascript" src="leases.js"></script>
+    <link rel="stylesheet" type="text/css" href="aq_tables_shared.css">
+    <body>
+        <h3 id="lease_list_h">List of standard and experimental aquaculture leases.</h3>
+    Click the Leaseholder name to open the lease decision PDF in a new tab. Click the Site ID to view the lease on the DMR Aquaculture Map app.
+    <!-- Include this style tag if adding search fields at the bottom of the table -->
+    <style type="text/css" class="init">
+    tfoot input {
+        width: 100%;
+        font-size: 8pt;
+        padding: 1px;
+        box-sizing: border-box;
+    }
+    </style>
+    <!-- Optionally set custom CSS for table here. For help see here: https://www.w3schools.com/css/css_table.asp -->
+    <style type="text/css">
+    div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+    }
+    th {
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+    }
+    </style>
+    <!-- Dropdown selector for lease status  -->
+    <p>
+        <form name="formSelectors">
+            <label for="selStatus" style="font-size: 9pt">Select Lease Status:</label>
+            <select name="selStatus" id="selStatus" onchange="ChangeStatus()" style="font-size: 9pt">
+                <option selected="selected" value="%27A%27+OR+STATUS+LIKE+%27P%27">Active and Pending</option>
+                <option value="%27E%27+OR+STATUS+LIKE+%27T%27">Terminated or Expired</option>
+                <option value="%27%25%25%27">All</option>
+            </select>
+        </form>
+    </p>
+    <style type="text/css" class="init">
+    tfoot input {
+        width: 100%;
+        font-size: 8pt;
+        padding: 1px;
+        box-sizing: border-box;
+    }
+    </style>
+    <!-- Set table ID here and build HTML table. Use DataTables CSS options from https://datatables.net/manual/styling/classes
+or use class = "custom_table" if only using CSS defined in custom CSS above  -->
+    <table id="lease_table" class="dataTable" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <!-- Add the column header names for the table here	-->
+                <th width=10>Leaseholder</th>
+                <th width=10>Site ID</th>
+                <th width=10>Primary Species</th>
+                <th width=10>Lease Type</th>
+                <th width=10>Lease Status</th>
+                <th width=10>Waterbody</th>
+                <th width=10>Town</th>
+                <th width=10>Expires</th>
+                <th width=10>Acreage</th>
+            </tr>
+        </thead>
+        <!-- Include tfoot tag if using search fields at bottom of table, and put field names in. -->
+        <tfoot>
+            <tr>
+                <th>Leaseholder</th>
+                <th>Site ID</th>
+                <th>Primary Species</th>
+                <th>Lease Type</th>
+                <th>Lease Status</th>
+                <th>Waterbody</th>
+                <th>Town</th>
+                <th>Expires</th>
+                <th>Acreage</th>
+            </tr>
+        </tfoot>
+        <tbody>
+        </tbody>
+    </table>
+    <div id="totalAcreage"></div>
+    <br>
+    Leases with the status “Pending” are either standard leases in the application process for renewal, or experimental leases in the application process for conversion to a standard lease.
+    </body>
+</html>
